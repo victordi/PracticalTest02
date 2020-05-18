@@ -50,7 +50,7 @@ public class CommunicationThread extends Thread {
             int servertime = serverThread.getTime();
 
             String moneda = bufferedReader.readLine();
-            if (hour * 100 + min <= servertime + 1 || servertime != 0 ) {
+            if (hour * 100 + min <= servertime + 1) {
                 Log.d("tag", "less then 1 minute passed");
                 if (moneda.contains("EUR")) {
                     printWriter.println(serverThread.getEUR());
