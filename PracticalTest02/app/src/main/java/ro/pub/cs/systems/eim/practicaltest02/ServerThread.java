@@ -5,11 +5,14 @@ import android.util.Log;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 
 public class ServerThread extends Thread {
 
         private int port = 0;
         private ServerSocket serverSocket = null;
+        private int hour = 0, min = 0;
+        private String eurrate, usdrate;
 
         public ServerThread(int port) {
             this.port = port;
@@ -18,6 +21,31 @@ public class ServerThread extends Thread {
             } catch (IOException ioException) {
                 Log.e("tag", "An exception has occurred: " + ioException.getMessage());
             }
+        }
+
+        public void setUSD(String rate) {
+            this.usdrate = rate;
+        }
+
+        public String getUSD() {
+            return usdrate;
+        }
+
+        public void setEUR(String rate) {
+            this.eurrate = rate;
+        }
+
+        public String getEUR() {
+            return eurrate;
+        }
+
+        public void setTime(int hour, int min) {
+            this.hour = hour;
+            this.min = min;
+        }
+
+        public int getTime() {
+            return hour * 100 + min;
         }
 
         public void setPort(int port) {

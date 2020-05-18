@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -42,7 +44,25 @@ public class CommunicationThread extends Thread {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
 
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            int hour = cal.get(Calendar.HOUR);
+            int min = cal.get(Calendar.MINUTE);
+            int servertime = serverThread.getTime();
+
             String moneda = bufferedReader.readLine();
+            if (hour * 100 + min <= servertime + 1 || servertime != 0 ) {
+                Log.d("tag", "less then 1 minute passed");
+                if (moneda.contains("EUR")) {
+                    printWriter.println(serverThread.getEUR());
+                    printWriter.flush();
+                    return;
+                } else {
+                    printWriter.println(serverThread.getUSD());
+                    printWriter.flush();
+                    return;
+                }
+
+            }
             Log.d("tag","moneda esta " + moneda);
 
             HttpClient httpClient = new DefaultHttpClient();
@@ -60,7 +80,19 @@ public class CommunicationThread extends Thread {
             JSONObject aux = obj.getJSONObject(moneda);
             String result = aux.getString("rate");
 
+            JSONObject obj2 = content.getJSONObject("time");
+            String timer = obj2.getString("updated");
+            String hourr = timer.substring(13,15);
+            String minn = timer.substring(16,18);
+            int srvH = Integer.parseInt(hourr);
+            int srvM = Integer.parseInt(minn);
+            serverThread.setTime(srvH, srvM);
+
             Log.d("tag", "[CommThread] rate = " + result);
+            if (moneda.contains("EUR"))
+                serverThread.setEUR(result);
+            else
+                serverThread.setUSD(result);
 
             printWriter.println(result);
             printWriter.flush();
