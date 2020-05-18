@@ -89,6 +89,11 @@
             android:layout_height="wrap_content"
             android:hint="Address" />
 
+        <TextView
+            android:layout_width="305dp"
+            android:layout_height="match_parent"
+            android:id="@+id/clPost" />
+
     </LinearLayout>
 
 
